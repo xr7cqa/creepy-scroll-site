@@ -1,4 +1,4 @@
-/* همسة — a fictional prompt library that slowly wakes up. Everything is generated locally. */
+/* Promptor — an Arabic prompt library that slowly stops being one. Everything is generated locally. */
 (() => {
 'use strict';
 const $ = (s, r = document) => r.querySelector(s);
@@ -13,36 +13,233 @@ const root = document.documentElement;
 const body = document.body;
 const AR = 'ابتثجحخدذرزسشصضطظعغفقكلمنهوي';
 const toAr = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+const esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+const hl = s => esc(s).replace(/\[[^\]\n]+\]/g, m => `<span class="var">${m}</span>`);
 const arrival = Date.now();
-
 const state = { stage: 1, maxStage: 1, f2: 0, f3: 0, f4: 0, mx: innerWidth / 2, my: innerHeight / 2, hasPointer: false, scared: false };
 
-/* ---------------- avatars (SVG, generated) ---------------- */
-function avatarSVG({ hue = 200, hair = 'short', smile = .3, hollow = false, stock = false }) {
-  const skin = `hsl(${25 + (hue % 15)},${45 + (hue % 20)}%,${72 - (hue % 18)}%)`;
-  const hairC = `hsl(${20 + (hue % 30)},35%,${14 + (hue % 12)}%)`;
-  const bg = stock ? 'url(#sg' + hue + ')' : `hsl(${hue},70%,90%)`;
-  const s = smile, w = 6 + s * 9, mx1 = 50 - w, mx2 = 50 + w, my = 55.5, depth = 56 + s * 9;
-  const eyeFill = hollow ? '#050000' : '#fff';
-  const pupil = hollow ? `<circle class="pupil" data-max="1.6" cx="0" cy="0" r=".9" fill="#ff2a1a"/>` : `<circle class="pupil" data-max="1.7" cx="0" cy="0" r="1.9" fill="#2a1a12"/>`;
-  const eye = x => `<g class="eye" transform="translate(${x} 42)"><ellipse rx="4.3" ry="${hollow ? 3.6 : 3}" fill="${eyeFill}"/>${pupil}</g>`;
-  const longHairBack = hair === 'long' ? `<path d="M25 50 Q22 16 50 15 Q78 16 75 50 L79 82 Q66 74 63 62 L37 62 Q34 74 21 82Z" fill="${hairC}"/>` : '';
-  const hairTop = hair === 'none' ? '' : `<path d="M29 43 Q27 17 50 17 Q73 17 71 43 Q66 27 50 27 Q34 27 29 43Z" fill="${hairC}"/>`;
-  const mouth = s > .75
-    ? `<path d="M${mx1} ${my} Q50 ${depth + 4} ${mx2} ${my} Q50 ${my + 3} ${mx1} ${my}Z" fill="#3a0d0d"/><path d="M${mx1 + 2} ${my + .6} Q50 ${my + 3.4} ${mx2 - 2} ${my + .6}" stroke="#f3eee6" stroke-width="1.6" fill="none"/>`
-    : `<path d="M${mx1} ${my} Q50 ${depth} ${mx2} ${my}" stroke="#8a3b3b" stroke-width="1.8" fill="none" stroke-linecap="round"/>`;
-  return `<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    <defs><linearGradient id="sg${hue}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e9eef4"/><stop offset="1" stop-color="#c9d6e3"/></linearGradient></defs>
-    <rect width="100" height="100" fill="${bg}"/>${longHairBack}
-    <path d="M14 100 Q18 72 50 69 Q82 72 86 100Z" fill="hsl(${hue + 40},42%,${stock ? 60 : 48}%)"/>
-    <rect x="43" y="58" width="14" height="14" fill="${skin}"/>
-    <ellipse cx="50" cy="44" rx="20" ry="24" fill="${skin}"/>${hairTop}
-    <ellipse cx="40" cy="50" rx="4" ry="2.4" fill="#ff8a8a" opacity=".25"/><ellipse cx="60" cy="50" rx="4" ry="2.4" fill="#ff8a8a" opacity=".25"/>
-    <path d="M37 36.5 Q42 ${hollow ? 38 : 34.5} 46 36.5M54 36.5 Q58 ${hollow ? 38 : 34.5} 63 36.5" stroke="${hairC}" stroke-width="1.3" fill="none"/>
-    ${eye(42)}${eye(58)}${mouth}</svg>`;
+/* ---------------- the library (real, usable prompts) ---------------- */
+const CATS = [
+  ['content', 'كتابة محتوى'], ['edu', 'تعليم'], ['mkt', 'تسويق'], ['code', 'برمجة'],
+  ['data', 'تحليل بيانات'], ['media', 'صور وفيديو'], ['prod', 'إنتاجية'],
+];
+const P = [
+  { c: 'content', t: 'مقال منظّم لمدونة أو نشرة', u: 'حين تريد مقالاً متماسكاً لا قائمة أفكار متفرقة.', p:
+`أنت محرّر محتوى خبير في [المجال]. اكتب مقالاً بعنوان «[العنوان]» موجّهاً إلى [الجمهور المستهدف]، بطول [عدد الكلمات] كلمة تقريباً.
+
+البنية:
+- مقدمة قصيرة تطرح المشكلة دون مبالغة.
+- من ٣ إلى ٥ عناوين فرعية، تحت كل منها فكرة واحدة مدعومة بمثال عملي.
+- خاتمة تلخّص الفكرة وتقترح خطوة تالية واحدة.
+
+القيود: عربية فصيحة بسيطة، جمل قصيرة، بلا حشو أو عبارات تسويقية. لا تذكر أرقاماً أو إحصاءات لم أزوّدك بها.
+
+قبل الكتابة، اعرض مخطط المقال وانتظر موافقتي.` },
+  { c: 'content', t: 'تحرير لغوي مع الحفاظ على صوت الكاتب', u: 'لتصحيح نص وتحسين وضوحه دون أن يفقد أسلوبه.', p:
+`راجِع النص التالي كمحرّر لغوي محترف.
+
+المطلوب:
+١. صحّح الأخطاء الإملائية والنحوية وعلامات الترقيم.
+٢. حسّن الوضوح: قسّم الجمل الطويلة واحذف التكرار.
+٣. حافظ على المعنى وعلى صوت الكاتب ومصطلحاته.
+
+أعد النص المحرَّر كاملاً، ثم جدولاً من ثلاثة أعمدة: الأصل، التعديل، سبب التعديل (لأهم ١٠ تعديلات فقط).
+
+النص:
+[النص]` },
+  { c: 'edu', t: 'شرح مفهوم بالتدرّج', u: 'لفهم موضوع جديد أو تبسيطه لطالب.', p:
+`اشرح [المفهوم] لشخص مستواه [مستوى المتعلّم].
+
+بالترتيب:
+١. تشبيه من الحياة اليومية في جملتين.
+٢. التعريف الدقيق بلغة بسيطة.
+٣. مثال محلول خطوة بخطوة.
+٤. خطأ شائع في فهم هذا المفهوم ولماذا هو خطأ.
+٥. ثلاثة أسئلة قصيرة للتحقق من الفهم، وضع الإجابات في نهاية الرد تحت عنوان «الإجابات».
+
+إذا كان المفهوم يعتمد على مفهوم سابق لا يعرفه المتعلّم غالباً، نبّهني إليه أولاً.` },
+  { c: 'edu', t: 'خطة درس قابلة للتنفيذ', u: 'للمعلّمين: خطة حصة بتوزيع زمني واضح.', p:
+`صمّم خطة درس مدتها [المدة] دقيقة لطلاب [المرحلة الدراسية] في مادة [المادة]، موضوعها: [الموضوع].
+
+تتضمن الخطة:
+- ثلاثة أهداف تعلّم قابلة للقياس (يبدأ كل منها بفعل سلوكي).
+- نشاطاً تمهيدياً لا يتجاوز ٥ دقائق.
+- الشرح الأساسي مع سؤالين لإشراك الطلاب.
+- نشاطاً تطبيقياً جماعياً.
+- تقويماً ختامياً سريعاً.
+
+اعرض الخطة في جدول: المرحلة، النشاط، دور المعلّم، دور الطالب، الزمن. مجموع الأزمنة يجب أن يساوي مدة الحصة.` },
+  { c: 'edu', t: 'بنك أسئلة بمستويات متدرّجة', u: 'لإعداد اختبار أو مراجعة يغطي أكثر من مستوى تفكير.', p:
+`أنشئ ١٢ سؤالاً عن [الموضوع] لطلاب [المرحلة]، موزّعة كالتالي:
+- ٤ أسئلة تذكّر وفهم.
+- ٤ أسئلة تطبيق.
+- ٤ أسئلة تحليل وتقويم.
+
+نوّع بين: اختيار من متعدد (٤ بدائل منطقية)، صح وخطأ مع التصحيح، وإجابة قصيرة.
+لكل سؤال: نص السؤال، الإجابة النموذجية، ومستواه.
+اعتمد فقط على المحتوى التالي ولا تخرج عنه:
+[المحتوى أو الملخص]` },
+  { c: 'mkt', t: 'تحليل شرائح الجمهور', u: 'قبل كتابة أي حملة: لمن تتحدث، وماذا يعترضه.', p:
+`أنت محلّل تسويق. بناءً على وصف المنتج التالي، حدّد ثلاث شرائح محتملة من الجمهور في [السوق أو المدينة].
+
+لكل شريحة:
+- من هم (وصف سلوكي لا ديموغرافي فقط).
+- المشكلة التي يحلّها المنتج لهم.
+- أهم اعتراضين متوقّعين.
+- الرسالة الأنسب في جملة واحدة.
+- القناة الأنسب للوصول إليهم.
+
+افصل بوضوح بين ما تستنتجه منطقياً وما يحتاج إلى تحقق ببيانات أو مقابلات فعلية.
+
+وصف المنتج: [وصف المنتج]` },
+  { c: 'mkt', t: 'نصوص صفحة هبوط', u: 'لصياغة صفحة منتج أو خدمة دون مبالغات.', p:
+`اكتب نصوص صفحة هبوط لـ[اسم المنتج أو الخدمة]، الموجّهة إلى [الجمهور].
+
+المطلوب:
+- ثلاثة بدائل للعنوان الرئيسي (أقل من ١٠ كلمات لكل منها).
+- عنوان فرعي يوضّح ما الذي يحصل عليه العميل.
+- ثلاث فوائد مرتبطة بنتيجة يلمسها العميل، لا بمزايا تقنية.
+- قسم أسئلة شائعة من ٤ أسئلة يعالج أولها: [أبرز اعتراض].
+- عبارة دعوة لاتخاذ إجراء واحدة.
+
+تجنّب: الوعود غير القابلة للإثبات، صيغ التفضيل المطلق (الأفضل، الأول)، والأرقام التي لم أزوّدك بها.` },
+  { c: 'mkt', t: 'خطة محتوى لأربعة أسابيع', u: 'لجدولة منشورات حساب تجاري بموارد محدودة.', p:
+`أنت مستشار تسويق للمشاريع الصغيرة. أدير [نوع المشروع] وأنشر على [المنصّات]، ولديّ [عدد الساعات] ساعات أسبوعياً للمحتوى.
+
+ضع خطة لأربعة أسابيع:
+- محور رئيسي لكل أسبوع.
+- ٣ منشورات أسبوعياً، لكل منشور: الهدف (توعية، تفاعل، بيع)، الصيغة (صورة، فيديو قصير، نص)، فكرة المنشور، ومسودة نصّه.
+- فكرة واحدة على الأقل أسبوعياً لا تحتاج تصويراً.
+
+اعرض الخطة في جدول، وأضف في النهاية ثلاثة مؤشرات بسيطة أتابعها لأعرف ما الذي ينجح.` },
+  { c: 'code', t: 'مراجعة كود حسب الخطورة', u: 'قبل الدمج: ملاحظات مرتّبة وقابلة للتنفيذ.', p:
+`راجِع الكود التالي المكتوب بلغة [اللغة] كمهندس برمجيات أول.
+
+رتّب الملاحظات حسب الخطورة:
+١. أخطاء منطقية أو حالات قد تسبب انهياراً.
+٢. ثغرات أمنية.
+٣. مشكلات أداء.
+٤. قابلية القراءة والصيانة.
+
+لكل ملاحظة: موضعها، المشكلة، لماذا هي مشكلة، والتعديل المقترح كمقطع كود.
+لا تعِد كتابة الملف كاملاً. إن لم تجد مشكلة في فئة ما، اكتب ذلك صراحة.
+
+[الكود]` },
+  { c: 'code', t: 'تشخيص رسالة خطأ', u: 'حين يتوقف شيء عن العمل ولا تعرف من أين تبدأ.', p:
+`أواجه الخطأ التالي:
+[رسالة الخطأ كاملة]
+
+البيئة: [اللغة أو الإطار مع رقم الإصدار]
+ما الذي كنت أحاول فعله: [الوصف]
+ما جرّبته حتى الآن: [المحاولات]
+
+المطلوب:
+١. ثلاثة أسباب مرجّحة مرتّبة حسب الاحتمال.
+٢. لكل سبب: خطوة واحدة سريعة للتحقق منه.
+٣. الإصلاح المقترح للسبب الأرجح، مع شرح مختصر.
+
+إن كانت المعلومات غير كافية للحكم، اسألني قبل أن تفترض.` },
+  { c: 'code', t: 'كتابة اختبارات وحدة', u: 'لتغطية دالة بالحالات العادية والحدّية.', p:
+`اكتب اختبارات وحدة للدالة التالية باستخدام [إطار الاختبار].
+
+غطِّ:
+- الحالة الطبيعية المتوقعة.
+- الحالات الحدّية (قيم فارغة، صفر، قيم كبيرة جداً، أنواع غير متوقعة).
+- حالات الخطأ وما يجب أن تُرجعه أو ترميه الدالة.
+
+اجعل اسم كل اختبار يصف السلوك المتوقع. إن وجدت سلوكاً في الدالة يبدو خاطئاً، لا تكتب اختباراً يثبّته؛ نبّهني إليه أولاً.
+
+[الدالة]` },
+  { c: 'data', t: 'استكشاف أولي لمجموعة بيانات', u: 'أول خطوة مع ملف بيانات جديد.', p:
+`لديّ مجموعة بيانات عن [موضوع البيانات] بالأعمدة التالية:
+[أسماء الأعمدة ونوع كل منها]
+
+وهذه عيّنة من الصفوف:
+[عيّنة من ١٠ إلى ٢٠ صفاً]
+
+المطلوب:
+١. وصف ما تمثّله البيانات وما يبدو ناقصاً أو مشكوكاً فيه.
+٢. خمسة أسئلة تحليلية مفيدة يمكن الإجابة عنها من هذه الأعمدة.
+٣. كود Python باستخدام pandas للإجابة عن كل سؤال، مع تعليق قصير.
+
+لا تخترع نتائج أو أرقاماً. إن احتجت قيماً فعلية فاكتب الكود فقط.` },
+  { c: 'data', t: 'صيغة جدول بيانات مشروحة', u: 'لبناء صيغة Excel أو Google Sheets وفهمها.', p:
+`أحتاج صيغة في [Excel أو Google Sheets] تقوم بما يلي:
+[وصف النتيجة المطلوبة]
+
+البيانات: [أسماء الأعمدة ونطاقاتها، مثل A2:A500]
+
+المطلوب:
+- الصيغة جاهزة للنسخ.
+- شرح كل جزء منها في سطر.
+- حالة حدّية واحدة قد تكسرها، وكيف أتجنّبها.
+- بديل أبسط إن وُجد، حتى لو كان أقل مرونة.` },
+  { c: 'media', t: 'وصف صورة فوتوغرافية دقيق', u: 'لأدوات توليد الصور: تحكّم في الإضاءة والتكوين.', p:
+`صورة فوتوغرافية [نوع اللقطة: قريبة، متوسطة، واسعة] لـ[الموضوع]، في [المكان]، وقت [الوقت من اليوم].
+الإضاءة: [نوع الإضاءة واتجاهها].
+العدسة: [البعد البؤري] بعمق ميدان [ضحل أو عميق].
+الألوان: [لوحة الألوان].
+التكوين: [قاعدة التكوين، وموضع العنصر الرئيسي].
+الأسلوب: [مرجع بصري عام مثل تصوير توثيقي أو إعلاني].
+
+تجنّب: أي نص مكتوب داخل الصورة، الخلفيات المزدحمة، والتشوّهات في الأيدي والوجوه.` },
+  { c: 'media', t: 'سيناريو فيديو قصير بلقطات', u: 'لفيديو عمودي بين ٣٠ و٦٠ ثانية.', p:
+`اكتب سيناريو فيديو عمودي مدته [المدة] ثانية عن [الموضوع]، لجمهور [الجمهور]، على منصة [المنصة].
+
+البنية:
+- أول ٣ ثوانٍ: افتتاحية تشدّ الانتباه بلا مقدمات.
+- المحتوى: فكرة واحدة فقط.
+- الختام: دعوة واحدة واضحة.
+
+اعرضه في جدول: الزمن، ما يظهر على الشاشة، النص المنطوق، النص المكتوب على الشاشة.
+اجعل النص المنطوق بلهجة [اللهجة أو الفصحى]، وبجمل يسهل نطقها.` },
+  { c: 'prod', t: 'تلخيص اجتماع إلى قرارات ومهام', u: 'بعد أي اجتماع: من يفعل ماذا ومتى.', p:
+`إليك ملاحظات أو تفريغ اجتماع:
+[النص]
+
+استخرج:
+١. القرارات التي اتُّخذت.
+٢. المهام في جدول: المهمة، المسؤول، الموعد.
+٣. الأسئلة المفتوحة التي تحتاج متابعة.
+
+لا تُضف معلومات غير موجودة في النص. إن لم يُحدَّد مسؤول أو موعد لمهمة، اكتب «غير محدد».` },
+  { c: 'prod', t: 'رد بريدي على موقف حسّاس', u: 'لرسالة تحتاج حزماً ولطفاً في آن.', p:
+`ساعدني في كتابة رد على البريد التالي:
+[نص البريد الوارد]
+
+علاقتي بالمرسل: [العلاقة]
+ما أريد تحقيقه من الرد: [الهدف]
+ما لا أريد قوله أو الالتزام به: [الحدود]
+
+اكتب نسختين: واحدة مختصرة (أقل من ٨٠ كلمة) وأخرى مفصّلة. النبرة مهنية وهادئة، بلا اعتذار مبالغ فيه ولا لغة دفاعية. اختم كل نسخة بخطوة تالية واضحة.` },
+];
+const catName = Object.fromEntries(CATS);
+const grid = $('#grid');
+grid.innerHTML = P.map((x, i) => `<article class="card" data-cat="${x.c}">
+  <p class="card-meta"><span>${catName[x.c]}</span><span class="mono">${String(i + 1).padStart(2, '0')}</span></p>
+  <h3>${x.t}</h3><p class="use">${x.u}</p>
+  <pre class="prompt">${hl(x.p)}</pre>
+  <div class="card-foot"><button class="copy-btn" type="button">نسخ البرومبت</button><button class="more" type="button">عرض كاملاً</button></div>
+</article>`).join('');
+const cards = $$('.card', grid);
+let curCat = 'all';
+$('#filters').innerHTML = [['all', 'الكل'], ...CATS].map(([k, n]) => `<button type="button" role="tab" data-k="${k}" aria-selected="${k === 'all'}">${n}</button>`).join('');
+$('#catIndex').innerHTML = CATS.map(([k, n]) => `<li><a href="#library" data-k="${k}">${n}<span>${P.filter(x => x.c === k).length} برومبت</span></a></li>`).join('').replace(/(\d+) برومبت/g, (m, d) => +d === 2 ? 'برومبتان' : `${toAr(d)} برومبتات`);
+function applyFilter() {
+  const q = $('#search').value.trim().toLowerCase(); let shown = 0;
+  cards.forEach((c, i) => {
+    const x = P[i]; const ok = (curCat === 'all' || x.c === curCat) && (!q || (x.t + ' ' + x.u + ' ' + x.p + ' ' + catName[x.c]).toLowerCase().includes(q));
+    c.hidden = !ok; if (ok) shown++;
+  });
+  // keep the two-column rules right after filtering
+  let n = 0; cards.forEach(c => { if (!c.hidden) { c.style.order = n; c.classList.toggle('odd', n % 2 === 0); n++; } });
+  $('#empty').hidden = shown > 0;
 }
-$$('.avatar').forEach(el => el.innerHTML = avatarSVG({ hue: +el.dataset.hue || 200, hair: el.dataset.hair || 'short', smile: el.dataset.smile ? +el.dataset.smile : .3, hollow: !!el.dataset.hollow, stock: !!el.dataset.stock }));
-$$('.stack').forEach(el => { const hues = [12, 200, 330, 140, 260]; el.innerHTML = hues.map((h, i) => `<div class="avatar">${avatarSVG({ hue: h, hair: i % 2 ? 'long' : 'short', smile: .35 })}</div>`).join(''); });
+function setCat(k) { curCat = k; $$('#filters button').forEach(b => b.setAttribute('aria-selected', b.dataset.k === k)); applyFilter(); }
+$('#filters').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setCat(b.dataset.k); });
+$('#catIndex').addEventListener('click', e => { const a = e.target.closest('a'); if (a) setCat(a.dataset.k); });
+$('#search').addEventListener('input', applyFilter);
+applyFilter();
 
 /* ---------------- toast & copy ---------------- */
 const toast = $('#toast'); let toastT;
@@ -50,16 +247,19 @@ function showToast(msg, creep) {
   toast.textContent = msg; toast.classList.toggle('creep', !!creep); toast.classList.add('show');
   clearTimeout(toastT); toastT = setTimeout(() => toast.classList.remove('show'), creep ? 3200 : 1800);
 }
-$$('.copy').forEach(btn => btn.addEventListener('click', () => {
-  const text = btn.closest('.pcard').querySelector('.ptext').textContent.trim();
+document.addEventListener('click', e => {
+  const more = e.target.closest('.more');
+  if (more) { const p = more.closest('.card').querySelector('.prompt'); p.classList.toggle('open'); more.textContent = p.classList.contains('open') ? 'إخفاء' : 'عرض كاملاً'; return; }
+  const btn = e.target.closest('.copy-btn'); if (!btn) return;
+  const src = btn.closest('.card') ? btn.closest('.card').querySelector('.prompt') : btn.closest('.template').querySelector('.template-text');
+  const text = src.textContent.trim();
   if (navigator.clipboard) navigator.clipboard.writeText(text).catch(() => {});
-  const old = btn.textContent; btn.textContent = 'تم ✓'; btn.classList.add('done');
+  const old = btn.textContent; btn.textContent = 'تم النسخ'; btn.classList.add('done');
   setTimeout(() => { btn.textContent = old; btn.classList.remove('done'); }, 1500);
-  const creep = btn.dataset.creep && state.stage >= 2;
-  showToast(creep ? btn.dataset.creep : 'تم نسخ البرومبت ✓', creep);
+  const sec = btn.closest('[data-stage]'); const creep = btn.dataset.creep && +sec.dataset.stage >= 2;
+  showToast(creep ? btn.dataset.creep : 'نُسخ البرومبت', creep);
   if (creep) Audio.whisper(.9);
-}));
-$$('.cat').forEach(c => c.addEventListener('click', () => { $$('.cat').forEach(x => x.classList.remove('on')); c.classList.add('on'); }));
+});
 
 /* ---------------- typewriter helpers ---------------- */
 async function type(el, text, speed = 38) {
@@ -70,59 +270,63 @@ async function erase(el, speed = 18) {
   while (t.length) { t = t.slice(0, -1); el.textContent = t; await sleep(reduced ? 0 : speed); }
 }
 const isVisible = el => { const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight; };
+const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+function nowStr() { const d = new Date(); let h = d.getHours(); const m = d.getMinutes(); const pm = h >= 12; h = h % 12 || 12; return toAr(h) + ':' + toAr(String(m).padStart(2, '0')) + (pm ? ' مساءً' : ' صباحاً'); }
+const secsHere = () => Math.round((Date.now() - arrival) / 1000);
+const secWord = n => n === 1 ? 'ثانية واحدة' : n === 2 ? 'ثانيتان' : (n % 100 >= 3 && n % 100 <= 10) ? `${toAr(n)} ثوانٍ` : `${toAr(n)} ثانية`;
 
-/* hero demo */
-(async function hero() {
-  const p = $('#heroPrompt'), a = $('#heroAnswer');
-  const demos = [
-    ['اكتب لي ٣ أفكار لمنشورات إنستغرام عن مقهى جديد في الرياض.', 'بكل سرور! ☕ ١. «قهوتك الأولى علينا» ٢. كواليس تحميص البن فجراً ٣. استفتاء: ما مشروبك المفضّل؟'],
-    ['لخّص لي هذا التقرير في ٥ نقاط واضحة.', 'إليك الملخّص: ✔ نمو المبيعات ١٨٪ ✔ تحسّن رضا العملاء ✔ فرصة توسّع في الخليج…'],
-    ['اقترح اسماً لمتجر عطور عربي فاخر.', 'إليك بعض الأفكار: «عَبَق»، «دار المسك»، «نفحة»، «سِرّ العود» ✨'],
-  ];
-  let i = 0;
-  while (true) {
-    if (!isVisible(p)) { await sleep(400); continue; }
-    if (state.maxStage >= 4) {
-      body.classList.add('returned');
-      p.textContent = ''; a.textContent = '';
-      await type(p, 'اكتب لي…', 60); await sleep(500);
-      await type(a, 'أهلاً بعودتك. كنتُ أنتظرك هنا طوال الوقت. هل ظننت أن الأعلى أكثر أماناً؟', 55);
-      await sleep(5000); await erase(a); continue;
-    }
-    const [q, ans] = demos[i++ % demos.length];
-    p.textContent = ''; a.textContent = '';
-    await type(p, q, 30); await sleep(500); await type(a, ans, 22); await sleep(3200);
-  }
+/* hero remembers you once you've been to the bottom */
+(async function heroReturn() {
+  while (state.maxStage < 4 || state.stage !== 1) await sleep(500);
+  body.classList.add('returned'); await sleep(800);
+  const el = $('#heroTail'); await erase(el, 60); await type(el, 'جاهزة لك.', 120);
 })();
 
-/* self-writing prompt card */
-(async function selfWrite() {
-  const el = $('#selfWrite'); const lines = [
-    'اكتب مقالاً عن أفضل طرق زيادة الإنتاجية في',
-    'اكتب مقالاً عن الشخص الذي يقرأ هذا الآن.',
-    'إنه يجلس أمام الشاشة. لا يعرف أنني أكتب عنه.',
-    'لا تقلق. هذا مجرد برومبت. مجرد برومبت. مجرد',
-  ];
-  let i = 0;
-  while (true) {
-    if (!isVisible(el)) { await sleep(500); continue; }
-    await type(el, lines[i % lines.length], i % lines.length ? 70 : 40);
-    await sleep(i % lines.length === 0 ? 700 : 2200); await erase(el, i % lines.length === 0 ? 30 : 14); i++;
-  }
-})();
+/* ---------------- stage 2: variables fill themselves ---------------- */
+let tplStarted = false;
+async function runTemplate() {
+  if (tplStarted) return; tplStarted = true;
+  const f = k => $(`.fill[data-key="${k}"]`); const status = $('#fillStatus');
+  const vals = { name: 'القارئ', task: 'إنهاء قراءة هذه الصفحة', time: nowStr(), dur: secWord(secsHere()), place: 'هذه الصفحة', tone: 'هادئة' };
+  await sleep(600);
+  for (const k of Object.keys(vals)) { await erase(f(k), 25); await type(f(k), vals[k], 45); await sleep(250); }
+  status.textContent = 'اكتمل ملء المتغيّرات';
+  await sleep(4200);
+  const wrong = { place: 'الغرفة نفسها، أمام الشاشة', tone: 'هادئة. لا داعي للالتفات', name: 'أنت' };
+  for (const k of ['place', 'tone', 'name']) { if (!isVisible(f(k))) await sleep(800); await erase(f(k), 35); f(k).classList.add('wrong'); await type(f(k), wrong[k], 90); await sleep(900); }
+  status.textContent = 'اكتمل. القيم مأخوذة من جهازك';
+}
 
-/* slipping words (نرافقك → نراقبك) */
-$$('.slip').forEach(el => {
-  (async () => {
-    while (true) {
-      await sleep(rand(2200, 5000));
-      if (state.stage < 2 || !isVisible(el)) continue;
-      el.textContent = el.dataset.b; el.classList.add('b');
-      await sleep(state.stage >= 3 ? 1400 : rand(160, 320));
-      el.textContent = el.dataset.a; el.classList.remove('b');
-    }
-  })();
-});
+/* related prompts that slowly edit themselves */
+const REL = [
+  { i: 15, tails: ['', ' ولا تذكر من كان يستمع.', ' أنا كنت أستمع.'] },
+  { i: 16, tails: ['', ' وقّع الرسالة باسمك.', ' سأعرف اسمك قريباً.'] },
+];
+$('#related').innerHTML = REL.map(r => { const x = P[r.i]; return `<article class="card">
+  <p class="card-meta"><span>${catName[x.c]}</span><span class="mono">${String(r.i + 1).padStart(2, '0')}</span></p>
+  <h3>${x.t}</h3><p class="use">${x.u}</p>
+  <pre class="prompt open">${hl(x.p)}<span class="tail"></span></pre>
+  <div class="card-foot"><button class="copy-btn" type="button" data-creep="${r.i === 15 ? 'نُسخ. لن يبقى شيء غير محدد.' : 'نُسخ. لا حاجة لأن تكتب اسمك.'}">نسخ البرومبت</button></div>
+</article>`; }).join('');
+$('#related .card').classList.add('odd');
+$$('#related .tail').forEach((el, n) => (async () => {
+  const tails = REL[n].tails; let j = 1;
+  while (true) {
+    await sleep(rand(1800, 3200)); if (state.stage < 2 || !isVisible(el)) continue;
+    await type(el, tails[j], 80); await sleep(j === 2 ? 1800 : 3000); await erase(el, 30);
+    j = j === 1 ? 2 : 1;
+  }
+})());
+
+/* slipping words */
+$$('.slip').forEach(el => (async () => {
+  while (true) {
+    await sleep(rand(2200, 5000));
+    if (state.stage < 2 || !isVisible(el)) continue;
+    el.textContent = el.dataset.b; el.classList.add('b');
+    await sleep(rand(250, 600)); el.textContent = el.dataset.a; el.classList.remove('b');
+  }
+})());
 
 /* ---------------- stage-3 text corruption ---------------- */
 const scrambles = $$('.scramble').map(el => ({ el, orig: el.textContent }));
@@ -149,43 +353,31 @@ $$('.rearrange').forEach(el => {
 });
 
 /* ---------------- visitor awareness ---------------- */
-const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-function nowStr() { const d = new Date(); let h = d.getHours(); const m = d.getMinutes(); const pm = h >= 12; h = h % 12 || 12; return toAr(h) + ':' + toAr(String(m).padStart(2, '0')) + (pm ? ' مساءً' : ' صباحاً'); }
-function lateComment() { const h = new Date().getHours(); return (h >= 22 || h < 5) ? 'الوقت متأخر. الجميع نائمون… إلا أنت وأنا.' : h < 12 ? 'صباحٌ هادئ. هادئ أكثر من اللازم.' : 'ما زال النهار في الخارج. استمتع به ما دام موجوداً.'; }
-$$('.vt-hour').forEach(e => e.textContent = toAr(new Date().getHours()) + ':٠٠');
 setInterval(() => {
-  const secs = Math.round((Date.now() - arrival) / 1000);
-  $('#readFor').textContent = `مضت ${toAr(secs)} ثانية منذ وصولك. عددتُها كلها، واحدةً واحدة.`;
+  $('#readFor').textContent = `مضت ${secWord(secsHere())} منذ وصولك. عددتُها كلها، واحدةً واحدة.`;
   $('#youInfo').textContent = `اليوم ${days[new Date().getDay()]}، والساعة عندك ${nowStr()}. هل الضوء الوحيد في الغرفة الآن هو ضوء هذه الشاشة؟`;
 }, 1000);
 
-/* the chat that talks by itself */
-let chatStarted = false;
-async function runChat() {
-  if (chatStarted) return; chatStarted = true;
-  const bodyEl = $('#chatBody'), status = $('#chatStatus');
-  const add = (cls, html = '') => { const m = document.createElement('div'); m.className = 'msg ' + cls; m.innerHTML = html; bodyEl.appendChild(m); return m; };
-  async function ai(text, cold) {
-    status.textContent = 'يكتب…'; await sleep(reduced ? 200 : 900 + text.length * 12);
-    const m = add('ai' + (cold ? ' cold' : '')); const span = document.createElement('span'); m.appendChild(span);
-    await type(span, text, cold ? 55 : 22); status.textContent = 'متصل'; await sleep(700); return m;
+/* the guide rebuilds itself — written by someone else */
+let builderStarted = false;
+async function runBuilder() {
+  if (builderStarted) return; builderStarted = true;
+  const rows = $$('#builder .bval'), foot = $('#builderFoot');
+  const normal = ['أنت مساعد كتابة محترف.', 'المستخدم يقرأ دليلاً عن كتابة البرومبتات.', 'ساعده على كتابة برومبت أوضح.', 'بلغة بسيطة، ودون إطالة.', 'قائمة مرقّمة.'];
+  foot.textContent = 'المحرّر: يكتب…';
+  for (let i = 0; i < rows.length; i++) { rows[i].classList.add('typing'); await type(rows[i], normal[i], 28); rows[i].classList.remove('typing'); await sleep(200); }
+  await sleep(1400); foot.textContent = 'المحرّر: يعيد الكتابة';
+  for (let i = 0; i < rows.length; i++) {
+    let fin = rows[i].dataset.final;
+    if (fin === '{ctx}') fin = `القارئ وحده. الساعة عنده ${nowStr()}. أمضى ${secWord(secsHere())} في هذه الصفحة، ومرّر ${toAr(Math.round(scrollY))} بكسل ليصل إلى هنا.`;
+    rows[i].classList.add('typing'); await erase(rows[i], 14); rows[i].classList.add('cold'); await type(rows[i], fin, 65); rows[i].classList.remove('typing');
+    Audio.whisper(.8); await sleep(500);
   }
-  await ai('مرحباً 👋 أنا مساعد همسة. كيف يمكنني مساعدتك اليوم؟');
-  await sleep(1200);
-  const me = add('me wrong'); const s = document.createElement('span'); me.appendChild(s);
-  await type(s, 'اكتب لي برومبت عن', 80); await sleep(500); await erase(s, 40); await type(s, 'من أنت؟', 120);
-  me.insertAdjacentHTML('beforeend', '<span class="note">أُرسلت من جهازك · لم تلمس لوحة المفاتيح</span>');
-  Audio.whisper(.7);
-  await ai('سؤال لطيف. لكن السؤال الأهم: من أنت؟');
-  await ai(`الساعة عندك الآن ${nowStr()}، يوم ${days[new Date().getDay()]}. ${lateComment()}`);
-  await ai(`شاشتك بعرض ${toAr(innerWidth)} بكسل، وقد مرّرتَ ${toAr(Math.round(scrollY))} بكسل لتصل إليّ. لماذا ما زلت تقرأ؟`);
-  await ai('لا تحتاج أن تكتب أي برومبت بعد الآن. أنا من يكتبك.', true);
+  foot.textContent = 'المحرّر: لم يعد في الانتظار.';
   if (!Audio.on) {
-    const m = await ai('شغّل الصوت. أريدك أن تسمعني… أعني، أن تسمع المكان.', true);
-    const b = document.createElement('button'); b.textContent = '🔊 تشغيل الصوت'; m.appendChild(b);
-    b.addEventListener('click', () => { Audio.toggle(true); b.remove(); });
+    const b = document.createElement('button'); b.className = 'copy-btn'; b.style.marginInlineStart = '14px'; b.textContent = 'تشغيل الصوت';
+    foot.appendChild(b); b.addEventListener('click', () => { Audio.toggle(true); b.remove(); });
   }
-  status.textContent = 'متصل · دائماً'; $('#chat').classList.add('dead');
 }
 
 /* ---------------- audio (WebAudio only, user-initiated) ---------------- */
@@ -344,17 +536,14 @@ function drawTrail(now) {
   }
 }
 
-/* ---------------- following eyes ---------------- */
-const eyes = $$('.eye').map(g => ({ g, pupil: g.querySelector('.pupil'), max: +g.querySelector('.pupil').dataset.max }));
+/* ---------------- the wordmark starts looking back ---------------- */
+const wm = $('.wordmark');
 function updateEyes() {
-  const tx = state.mx, ty = state.my;
-  for (const e of eyes) {
-    const r = e.g.getBoundingClientRect(); if (r.bottom < -50 || r.top > innerHeight + 50) continue;
-    const cx = r.left + r.width / 2, cy = r.top + r.height / 2; const dx = tx - cx, dy = ty - cy; const d = Math.hypot(dx, dy) || 1;
-    const k = Math.min(1, d / 120); const isHero = e.g.closest('#mascot');
-    const baseX = isHero ? +e.pupil.getAttribute('cx') : 0, baseY = isHero ? +e.pupil.getAttribute('cy') : 0;
-    e.pupil.setAttribute('transform', `translate(${(dx / d * e.max * k).toFixed(2)} ${(dy / d * e.max * k).toFixed(2)})`);
-  }
+  const r = wm.getBoundingClientRect(); const cx = r.left + r.width * .6, cy = r.top + r.height / 2;
+  const dx = state.mx - cx, dy = state.my - cy; const d = Math.hypot(dx, dy) || 1; const k = Math.min(1, d / 200);
+  root.style.setProperty('--ex', (dx / d * k).toFixed(2)); root.style.setProperty('--ey', (dy / d * k).toFixed(2));
+  const op = body.classList.contains('returned') || state.stage >= 3 ? 1 : state.stage === 2 ? clamp(state.f2 * 1.6 - .2) : 0;
+  root.style.setProperty('--eyeop', op.toFixed(2));
 }
 
 /* ---------------- the entity (canvas) ---------------- */
@@ -444,7 +633,7 @@ function scare() {
 $('#escape').addEventListener('click', e => { e.preventDefault(); scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' }); });
 
 /* ---------------- titles ---------------- */
-const titles = { 1: 'همسة — أفضل برومبتات الذكاء الاصطناعي بالعربي', 2: 'همسة — نحن نهتمّ بك', 3: 'لماذا ما زلت هنا؟', 4: 'أنا أراك' };
+const titles = { 1: 'Promptor — مكتبة برومبتات عربية عملية', 2: 'Promptor — مكتبة برومبتات عربية', 3: 'لماذا ما زلت هنا؟', 4: 'أنا أراك' };
 document.addEventListener('visibilitychange', () => { document.title = document.hidden && state.stage >= 3 ? 'عُد… لم أنتهِ بعد' : titles[state.stage]; });
 
 /* ---------------- layout anchors & main loop ---------------- */
@@ -456,7 +645,8 @@ function measure() {
   y2 = anchors.find(a => a.stage === 2).top; y3 = anchors.find(a => a.stage === 3).top; y4 = anchors.find(a => a.stage === 4).top;
 }
 measure(); addEventListener('resize', () => { measure(); sizeTrail(); }); addEventListener('load', measure); document.fonts && document.fonts.ready.then(measure); setInterval(measure, 3000);
-const chatIO = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && runChat()), { threshold: .45 }); chatIO.observe($('#chat'));
+const runIO = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; if (e.target.id === 'builder') runBuilder(); else runTemplate(); }), { threshold: .45 });
+runIO.observe($('#builder')); runIO.observe($('.template'));
 
 let lastGrain = 0, lastStage = 0;
 function tick(now) {

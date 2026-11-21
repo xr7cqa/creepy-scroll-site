@@ -3,211 +3,175 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>همسة — أفضل برومبتات الذكاء الاصطناعي بالعربي</title>
-<meta name="description" content="همسة: مكتبة برومبتات عربية مجرّبة لأدوات الذكاء الاصطناعي. انسخ، الصق، وأبدع.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%236d4aff'/%3E%3Ccircle cx='24' cy='30' r='6' fill='white'/%3E%3Ccircle cx='40' cy='30' r='6' fill='white'/%3E%3C/svg%3E">
+<title>Promptor — مكتبة برومبتات عربية عملية</title>
+<meta name="description" content="Promptor: مكتبة برومبتات عربية عملية للكتابة والتعليم والتسويق والبرمجة وتحليل البيانات، مع دليل مختصر لكتابة برومبت جيد.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23141414'/%3E%3Crect x='9' y='9' width='14' height='14' fill='%23f6f4ef'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Aref+Ruqaa:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@500;600&family=Aref+Ruqaa:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body data-stage="1">
 
-<!-- fixed atmospheric layers -->
 <div id="desat" aria-hidden="true"></div>
 <div id="grain" aria-hidden="true"></div>
 <div id="vhs" aria-hidden="true"><div class="bar"></div></div>
 <div id="vignette" aria-hidden="true"></div>
 <canvas id="trail" aria-hidden="true"></canvas>
 <div id="toast" role="status" aria-live="polite"></div>
-<button id="soundBtn" type="button" aria-pressed="false" title="الصوت">
-  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path class="waves" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path class="mute" d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+<button id="soundBtn" type="button" aria-pressed="false" title="تشغيل الصوت / إيقافه">
+  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path class="waves" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path class="mute" d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
   <span class="lbl">الصوت</span>
 </button>
 <div id="scare" aria-hidden="true"><canvas id="scareCanvas"></canvas></div>
 
 <header class="nav">
-  <a class="brand" href="#top">
-    <span class="logo"><i></i><i></i></span>
-    <span class="brand-name">همسة</span>
-  </a>
+  <a class="wordmark" href="#top" dir="ltr" aria-label="Promptor"><span class="mark"></span>Pr<span class="o">o</span>mpt<span class="o">o</span>r</a>
   <nav class="links">
     <a href="#library">المكتبة</a>
-    <a href="#cats">التصنيفات</a>
-    <a href="#pricing">الأسعار</a>
-    <a href="#reviews">آراء العملاء</a>
+    <a href="#guide">الدليل</a>
+    <a href="#about">عن المشروع</a>
   </nav>
-  <a class="btn btn-sm" href="#pricing">ابدأ مجاناً</a>
 </header>
 
 <main id="top">
 
-<!-- ================= STAGE 1 : perfectly normal ================= -->
+<!-- =============== STAGE 1 — a credible, quiet product =============== -->
 <section class="hero" data-stage="1">
-  <div class="hero-bg" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <span class="badge"><b>جديد</b> +٥٬٠٠٠ برومبت محدَّث أسبوعياً</span>
-      <h1>أفضل برومبتات الذكاء الاصطناعي <span class="grad">بالعربي</span></h1>
-      <p class="lead">همسة مكتبة برومبتات مجرّبة ومكتوبة بعناية لأدوات الذكاء الاصطناعي. انسخ البرومبت، الصقه، واحصل على نتائج مذهلة خلال ثوانٍ — للمحتوى والتسويق والبرمجة والتعليم.</p>
+      <p class="eyebrow">مكتبة برومبتات عربية</p>
+      <h1>برومبتات عربية مكتوبة بعناية، <span id="heroTail">جاهزة للعمل.</span></h1>
+      <p class="lead">مجموعة مختارة من البرومبتات العملية للكتابة والتعليم والتسويق والبرمجة وتحليل البيانات. كل برومبت يحتوي على متغيّرات بين قوسين <mark class="var">[هكذا]</mark> تستبدلها بتفاصيلك، ثم تنسخه إلى الأداة التي تستخدمها.</p>
       <div class="cta-row">
         <a class="btn" href="#library">تصفّح المكتبة</a>
-        <a class="btn btn-ghost" href="#pricing">شاهد الأسعار</a>
-      </div>
-      <div class="trust">
-        <div class="stack" data-avatars="5"></div>
-        <span>يثق بنا أكثر من <b>١٢٠٬٠٠٠</b> صانع محتوى ومسوّق</span>
+        <a class="link-arrow" href="#guide">كيف تكتب برومبتاً جيداً ←</a>
       </div>
     </div>
-    <div class="hero-visual">
-      <div class="app-window">
-        <div class="win-bar"><span></span><span></span><span></span><em>همسة · المساعد</em></div>
-        <div class="win-body">
-          <div class="prompt-line"><span class="chip">برومبت</span><p id="heroPrompt"></p></div>
-          <div class="ai-line"><div class="mascot" id="mascot">
-            <svg viewBox="0 0 120 120"><defs><radialGradient id="mg" cx="40%" cy="35%"><stop offset="0" stop-color="#a48bff"/><stop offset="1" stop-color="#5b36f2"/></radialGradient></defs>
-              <path class="m-body" d="M60 10c28 0 48 20 48 47 0 30-20 52-48 52S12 87 12 57C12 30 32 10 60 10z" fill="url(#mg)"/>
-              <g class="eye"><ellipse cx="44" cy="55" rx="10" ry="12" fill="#fff"/><circle class="pupil" data-max="4" cx="44" cy="56" r="5" fill="#1b1340"/></g>
-              <g class="eye"><ellipse cx="76" cy="55" rx="10" ry="12" fill="#fff"/><circle class="pupil" data-max="4" cx="76" cy="56" r="5" fill="#1b1340"/></g>
-              <path class="m-mouth" d="M48 80q12 9 24 0" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>
-            </svg></div>
-            <p id="heroAnswer" class="typing"></p>
-          </div>
-        </div>
-      </div>
-      <div class="float-card fc1">⭐ ٤٫٩ من ٥ — ١٨ ألف تقييم</div>
-      <div class="float-card fc2">⚡ وفّرت ٦ ساعات هذا الأسبوع</div>
-    </div>
+    <aside class="anatomy" aria-label="تشريح برومبت">
+      <p class="anatomy-head"><span>تشريح برومبت</span><span class="mono">01</span></p>
+      <p class="anatomy-text">
+        <span class="part" data-n="١">أنت محرّر لغوي متخصص في المحتوى التقني.</span>
+        <span class="part" data-n="٢">لديّ مقال موجّه لمطوّرين مبتدئين، وأسلوبه ثقيل.</span>
+        <span class="part" data-n="٣">أعد صياغة الفقرة التالية لتكون أوضح وأقصر.</span>
+        <span class="part" data-n="٤">حافظ على المصطلحات التقنية كما هي، ولا تتجاوز ٨٠ كلمة.</span>
+        <span class="part" data-n="٥">أعد النص فقط، ثم سطراً واحداً يشرح أهم تعديل.</span>
+      </p>
+      <ol class="anatomy-legend">
+        <li><b>١</b> الدور</li><li><b>٢</b> السياق</li><li><b>٣</b> المهمة</li><li><b>٤</b> القيود</li><li><b>٥</b> صيغة الناتج</li>
+      </ol>
+    </aside>
   </div>
-</section>
-
-<section class="logos" data-stage="1">
-  <div class="wrap"><p>يستخدمه فريق العمل في</p>
-    <div class="logo-row"><span>نَسَق</span><span>مِداد</span><span>رُكن</span><span>بوصلة</span><span>أُفق</span><span>سِراج</span></div>
-  </div>
-</section>
-
-<section id="cats" class="cats" data-stage="1">
   <div class="wrap">
-    <h2 class="sec-title">كل ما تحتاجه، في تصنيف واحد</h2>
-    <div class="chips">
-      <button class="cat on">✍️ كتابة المحتوى</button><button class="cat">📈 التسويق</button><button class="cat">💻 البرمجة</button><button class="cat">🎓 التعليم</button><button class="cat">🎨 توليد الصور</button><button class="cat">💼 ريادة الأعمال</button><button class="cat">⏱️ الإنتاجية</button>
-    </div>
+    <ul class="cat-index" id="catIndex"></ul>
   </div>
 </section>
 
 <section id="library" class="library" data-stage="1">
   <div class="wrap">
-    <h2 class="sec-title">الأكثر نسخاً هذا الأسبوع</h2>
-    <p class="sec-sub">برومبتات مجرّبة، جاهزة للاستخدام فوراً.</p>
-    <div class="cards">
-      <article class="pcard"><header><span class="tag">التسويق</span><span class="uses">١٢٫٤ ألف نسخة</span></header><h3>خطة محتوى لشهر كامل</h3><p class="ptext">تصرّف كخبير تسويق رقمي. اكتب لي خطة محتوى لمدة ٣٠ يوماً لعلامة تجارية في مجال [المجال]، مع فكرة منشور يومية ونبرة مناسبة للجمهور العربي.</p><footer><span class="stars">★★★★★</span><button class="copy">نسخ</button></footer></article>
-      <article class="pcard"><header><span class="tag">الكتابة</span><span class="uses">٩٫١ ألف نسخة</span></header><h3>مقال مُحسَّن لمحركات البحث</h3><p class="ptext">اكتب مقالاً من ١٢٠٠ كلمة عن [الموضوع] بأسلوب سلس، مع عناوين فرعية، وأسئلة شائعة، وكلمات مفتاحية طبيعية في النص.</p><footer><span class="stars">★★★★★</span><button class="copy">نسخ</button></footer></article>
-      <article class="pcard"><header><span class="tag">البرمجة</span><span class="uses">٧٫٨ ألف نسخة</span></header><h3>مراجِع الكود الصارم</h3><p class="ptext">راجع هذا الكود كمهندس خبير. اذكر الأخطاء المحتملة، ومشكلات الأداء، واقترح نسخة محسّنة مع شرح موجز لكل تعديل.</p><footer><span class="stars">★★★★☆</span><button class="copy">نسخ</button></footer></article>
-      <article class="pcard"><header><span class="tag">التعليم</span><span class="uses">٦٫٢ ألف نسخة</span></header><h3>اشرحها لطفل في العاشرة</h3><p class="ptext">اشرح لي مفهوم [المفهوم] كأنني طفل في العاشرة، باستخدام مثال من الحياة اليومية، ثم اختبرني بثلاثة أسئلة قصيرة.</p><footer><span class="stars">★★★★★</span><button class="copy">نسخ</button></footer></article>
-      <article class="pcard"><header><span class="tag">الأعمال</span><span class="uses">٥٫٥ ألف نسخة</span></header><h3>تحليل SWOT في دقيقة</h3><p class="ptext">أجرِ تحليل SWOT مفصّلاً لمشروع [وصف المشروع] في السوق الخليجي، ثم لخّص أهم ثلاث توصيات قابلة للتنفيذ.</p><footer><span class="stars">★★★★★</span><button class="copy">نسخ</button></footer></article>
-      <article class="pcard"><header><span class="tag">الصور</span><span class="uses">٤٫٩ ألف نسخة</span></header><h3>صورة منتج احترافية</h3><p class="ptext">صورة منتج احترافية لـ [المنتج] على خلفية رخامية فاتحة، إضاءة ناعمة من النافذة، عمق ميدان ضحل، أسلوب إعلانات فاخرة.</p><footer><span class="stars">★★★★★</span><button class="copy">نسخ</button></footer></article>
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <div><h2>المكتبة</h2><p>اختر تصنيفاً أو ابحث بكلمة. استبدل ما بين القوسين قبل الاستخدام.</p></div>
     </div>
+    <div class="toolbar">
+      <label class="search"><span class="sr">بحث</span>
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <input id="search" type="search" placeholder="ابحث: مقال، اختبار، بيانات، بريد…" autocomplete="off">
+      </label>
+      <div class="filters" id="filters" role="tablist"></div>
+    </div>
+    <div class="grid" id="grid"></div>
+    <p class="empty" id="empty" hidden>لا توجد نتائج مطابقة. جرّب كلمة أخرى أو اختر «الكل».</p>
   </div>
 </section>
 
-<section class="stats" data-stage="1">
-  <div class="wrap stat-row">
-    <div><b>+٥٬٠٠٠</b><span>برومبت مجرّب</span></div>
-    <div><b>١٢٠ ألف</b><span>مستخدم نشط</span></div>
-    <div><b>٤٫٩</b><span>متوسط التقييم</span></div>
-    <div><b>٣٠ ثانية</b><span>من الفكرة إلى النتيجة</span></div>
-  </div>
-</section>
-
-<section id="reviews" class="reviews" data-stage="1">
+<section id="guide" class="guide" data-stage="1">
   <div class="wrap">
-    <h2 class="sec-title">ماذا يقول مستخدمونا</h2>
-    <div class="tgrid">
-      <figure class="tcard"><div class="avatar" data-hue="200" data-hair="short"></div><blockquote>«وفّرت عليّ همسة ساعات من التجربة. البرومبتات مكتوبة بلغة عربية حقيقية، لا ترجمة آلية.»</blockquote><figcaption><b>خالد العتيبي</b><span>صانع محتوى</span></figcaption></figure>
-      <figure class="tcard"><div class="avatar" data-hue="330" data-hair="long"></div><blockquote>«أستخدم برومبتات التسويق يومياً مع فريقي. الجودة ثابتة والنتائج ممتازة.»</blockquote><figcaption><b>نورة القحطاني</b><span>مديرة تسويق</span></figcaption></figure>
-      <figure class="tcard"><div class="avatar" data-hue="140" data-hair="none"></div><blockquote>«مراجِع الكود وحده يستحق الاشتراك. أنصح به لكل مطوّر عربي.»</blockquote><figcaption><b>يوسف حداد</b><span>مهندس برمجيات</span></figcaption></figure>
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <div><h2>كيف تكتب برومبتاً جيداً</h2><p>خمسة عناصر تكفي لمعظم المهام. لا يلزم أن تكون كلها في كل برومبت، لكن غياب أحدها هو السبب الأكثر شيوعاً لنتيجة ضعيفة.</p></div>
+    </div>
+    <ol class="steps">
+      <li><span class="n">١</span><h3>الدور</h3><p>حدّد الخبرة التي تريد أن يكتب منها النموذج. الدور يضبط المفردات ومستوى العمق.</p><code>أنت محاسب قانوني يشرح لأصحاب المشاريع الصغيرة.</code></li>
+      <li><span class="n">٢</span><h3>السياق</h3><p>ما الذي يعرفه النموذج عن موقفك؟ الجمهور، الهدف، وما سبق تجربته.</p><code>أدير متجراً إلكترونياً صغيراً، وهذه أول سنة أقدّم فيها إقراراً ضريبياً.</code></li>
+      <li><span class="n">٣</span><h3>المهمة</h3><p>فعل واحد واضح. إن كانت المهمة مركّبة فقسّمها إلى خطوات مرقّمة.</p><code>اشرح لي المصروفات التي يمكن خصمها، ثم ما يجب أن أحتفظ به من مستندات.</code></li>
+      <li><span class="n">٤</span><h3>القيود</h3><p>الطول، النبرة، ما يجب تجنّبه، وما لا يجوز اختراعه. القيود تمنع الحشو.</p><code>بلغة بسيطة، دون أرقام أو نسب لم أزوّدك بها، وأشر إلى ما يستلزم مراجعة مختص.</code></li>
+      <li><span class="n">٥</span><h3>صيغة الناتج</h3><p>كيف تريد شكل الإجابة: جدول، قائمة، نص متصل، كود. هذا يوفّر جولة تعديل كاملة.</p><code>جدول من عمودين: البند، وما المستند المطلوب.</code></li>
+    </ol>
+    <div class="compare">
+      <div class="weak"><p class="label">برومبت ضعيف</p><p class="ex">اكتب لي عن التسويق بالمحتوى.</p><p class="why">لا جمهور، لا هدف، لا طول، لا صيغة. ستحصل على نص عام يصلح لأي أحد ولا يفيد أحداً.</p></div>
+      <div class="strong"><p class="label">برومبت أفضل</p><p class="ex">أنت مستشار تسويق للمشاريع الصغيرة. أملك مخبزاً منزلياً في [المدينة] وأبيع عبر إنستغرام فقط. اقترح ٥ أفكار محتوى أسبوعية لا تحتاج تصويراً احترافياً، لكل فكرة: الهدف منها، وصيغة المنشور، ومثال لنصّه. اجعل الإجابة في جدول.</p><p class="why">الدور والسياق يحدّدان الواقع، والمهمة قابلة للقياس، والصيغة جاهزة للاستخدام مباشرة.</p></div>
     </div>
   </div>
 </section>
 
-<section id="pricing" class="pricing" data-stage="1">
+<section id="about" class="about" data-stage="1">
+  <div class="wrap about-grid">
+    <div class="sec-head"><span class="sec-num">03</span><div><h2>عن Promptor</h2></div></div>
+    <div class="about-body">
+      <p>Promptor مكتبة مستقلة لبرومبتات عربية عملية. كل ما فيها مجاني للنسخ والتعديل والاستخدام في أي أداة ذكاء اصطناعي تفضّلها، دون تسجيل أو حسابات.</p>
+      <p class="note">تذكير: نماذج الذكاء الاصطناعي تخطئ. راجِع الناتج قبل استخدامه، خاصة المعلومات والأرقام والاقتباسات.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =============== STAGE 2 — slight wrongness =============== -->
+<section class="s2 vars" data-stage="2">
   <div class="wrap">
-    <h2 class="sec-title">أسعار بسيطة وواضحة</h2>
-    <p class="sec-sub">ابدأ مجاناً، وترقَّ متى شئت. إلغاء في أي وقت.</p>
-    <div class="plans">
-      <div class="plan"><h3>المجانية</h3><div class="price"><b>مجاناً</b><span>للأبد</span></div><ul><li>٥٠ برومبت أساسي</li><li>٣ تصنيفات</li><li>دعم عبر البريد</li></ul><a class="btn btn-ghost" href="#library">ابدأ الآن</a></div>
-      <div class="plan featured"><span class="ribbon">الأكثر شيوعاً</span><h3>الاحترافية</h3><div class="price"><b>٢٩</b><span>ر.س / شهرياً</span></div><ul><li>كل البرومبتات (+٥٬٠٠٠)</li><li>تحديثات أسبوعية</li><li>مولّد برومبتات ذكي</li><li>دعم ذو أولوية</li></ul><a class="btn" href="#library">اشترك الآن</a></div>
-      <div class="plan"><h3>الفرق</h3><div class="price"><b>٩٩</b><span>ر.س / شهرياً</span></div><ul><li>حتى ١٠ أعضاء</li><li>مكتبة برومبتات مشتركة</li><li>تقارير الاستخدام</li></ul><a class="btn btn-ghost" href="#library">تواصل معنا</a></div>
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <div><h2>القوالب والمتغيّرات</h2><p>المتغيّر هو ما يجعل البرومبت قابلاً لإعادة الاستخدام. في المثال التالي تُملأ المتغيّرات تلقائياً بقيم توضيحية.</p></div>
+    </div>
+    <div class="template">
+      <p class="template-label">قالب: رسالة تذكير</p>
+      <p class="template-text">اكتب رسالة قصيرة ولطيفة إلى <span class="fill" data-key="name">[اسمك]</span> تذكّره بأن <span class="fill" data-key="task">[المهمة]</span> موعدها <span class="fill" data-key="time">[الوقت]</span>، وأنه قضى <span class="fill" data-key="dur">[المدة]</span> في <span class="fill" data-key="place">[المكان]</span>. اجعل النبرة <span class="fill" data-key="tone">[النبرة]</span>.</p>
+      <div class="template-foot"><span class="mono" id="fillStatus">جارٍ ملء المتغيّرات…</span><button class="copy-btn" data-copy="#tplCopy" data-creep="نُسخ القالب. كل القيم صحيحة، تحقّقتُ منها.">نسخ</button><span id="tplCopy" hidden></span></div>
     </div>
   </div>
 </section>
 
-<!-- ================= STAGE 2 : subtle wrongness ================= -->
-<section class="s2 suggest" data-stage="2">
+<section class="s2 related" data-stage="2">
   <div class="wrap">
-    <h2 class="sec-title">برومتبات مقترحة لك <small>(بناءً على نشاطك)</small></h2>
-    <p class="sec-sub">اخترناها خصيصاً لك. نعرف ما تحبّه.</p>
-    <div class="cards">
-      <article class="pcard"><header><span class="tag">الإنتاجية</span><span class="uses">١٢٫٤ ألف نسخة</span></header><h3>روتين صباحي مثالي</h3><p class="ptext">صمّم لي روتيناً صباحياً يبدأ في الساعة <span class="vt-hour"></span> ويساعدني على التركيز طوال اليوم، ودون أن أنظر خلفي.</p><footer><span class="stars">★★★★★</span><button class="copy" data-creep="نُسخ. سنتذكّر أنك نسخته.">نسخ</button></footer></article>
-      <article class="pcard selfwrite"><header><span class="tag">الكتابة</span><span class="uses">١٢٫٤ ألف نسخة</span></header><h3>برومبت يكتب نفسه ✨</h3><p class="ptext" id="selfWrite"></p><footer><span class="stars">★★★★★</span><button class="copy" data-creep="تم النسخ. لم تكن أنت من كتبه.">نسخ</button></footer></article>
-      <article class="pcard"><header><span class="tag">التسويق</span><span class="uses">١٢٫٤ ألف نسخة</span></header><h3>تحليل جمهورك المستهدف</h3><p class="ptext">حلّل جمهوري المستهدف: أين يعيش، متى ينام، ماذا يقرأ الآن، ولماذا ما زال يمرّر الصفحة إلى الأسفل.</p><footer><span class="stars">★★★★★</span><button class="copy" data-creep="تم. الجمهور المستهدف هو أنت.">نسخ</button></footer></article>
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <div><h2>برومبتات ذات صلة</h2><p>اقتُرحت بناءً على ما قرأته في هذه الصفحة.</p></div>
     </div>
+    <div class="grid two" id="related"></div>
   </div>
 </section>
 
-<section class="s2 same" data-stage="2">
+<section class="s2 mistakes" data-stage="2">
+  <div class="wrap narrow">
+    <div class="sec-head"><span class="sec-num">06</span><div><h2>أخطاء شائعة</h2></div></div>
+    <ol class="mlist">
+      <li><b>الغموض.</b> «حسّن هذا النص» دون أن تقول: لمن، ولماذا.</li>
+      <li><b>غياب السياق.</b> النموذج لا يعرف شيئاً عنك. <span class="slip" data-a="إلا ما تخبره به." data-b="إلا ما يراه.">إلا ما تخبره به.</span></li>
+      <li><b>طلب كل شيء مرة واحدة.</b> المهام الطويلة أفضل حين تُقسَّم.</li>
+      <li><b>تصديق كل ما يُكتب.</b> النموذج يملأ الفراغات بثقة، حتى حين لا يعرف.</li>
+      <li class="odd"><b>الاعتقاد أنك من يكتب البرومبت.</b></li>
+    </ol>
+  </div>
+</section>
+
+<!-- =============== STAGE 3 — the guide degrades =============== -->
+<section class="s3 s3a rebuild" data-stage="3">
   <div class="wrap">
-    <h2 class="sec-title">ماذا يقول مستخدمونا</h2>
-    <div class="tgrid four">
-      <figure class="tcard"><div class="avatar" data-hue="20" data-hair="long" data-smile="0.2"></div><blockquote>«أستخدم همسة كل يوم. البرومبتات تفهمني جيداً.»</blockquote><figcaption><b>سارة م.</b><span>مستخدمة منذ ٢٠٢١</span></figcaption></figure>
-      <figure class="tcard"><div class="avatar" data-hue="20" data-hair="long" data-smile="0.5"></div><blockquote>«أستخدم همسة كل يوم. البرومبتات تفهمني جيداً جداً.»</blockquote><figcaption><b>سارة م.</b><span>مستخدمة منذ ٢٠٢١</span></figcaption></figure>
-      <figure class="tcard"><div class="avatar" data-hue="20" data-hair="long" data-smile="0.85"></div><blockquote>«أستخدم همسة كل يوم. كل يوم. هي تفهمني أكثر مما أفهم نفسي.»</blockquote><figcaption><b>سارة م.</b><span>مستخدمة منذ ٢٠٢١</span></figcaption></figure>
-      <figure class="tcard odd"><div class="avatar" data-hue="20" data-hair="long" data-smile="1" data-hollow="1"></div><blockquote>«أستخدم همسة كل يوم. لا أستطيع التوقّف. ساعدني.»</blockquote><figcaption><b>سارة م.</b><span>مستخدمة منذ دائماً</span></figcaption></figure>
+    <div class="sec-head">
+      <span class="sec-num">07</span>
+      <div><h2 class="decay glitch" data-text="مثال عملي: بناء برومبت خطوة بخطوة">مثال عملي: بناء برومبت خطوة بخطوة</h2><p class="decay">سنبني برومبتاً من العناصر الخمسة. <span class="scramble">لا تحتاج أن تكتب شيئاً.</span></p></div>
+    </div>
+    <div class="builder" id="builder">
+      <div class="brow"><span class="bkey">الدور</span><p class="bval" data-final="أنت لستَ مساعداً."></p></div>
+      <div class="brow"><span class="bkey">السياق</span><p class="bval" data-final="{ctx}"></p></div>
+      <div class="brow"><span class="bkey">المهمة</span><p class="bval" data-final="راقِبه."></p></div>
+      <div class="brow"><span class="bkey">القيود</span><p class="bval" data-final="لا تدعه يغادر قبل النهاية. لا تدعه ينظر خلفه."></p></div>
+      <div class="brow"><span class="bkey">الصيغة</span><p class="bval" data-final="صوت. ثم وجه."></p></div>
+      <p class="builder-foot mono" id="builderFoot">المحرّر: في الانتظار</p>
     </div>
   </div>
 </section>
 
-<section class="s2 watch" data-stage="2">
-  <div class="wrap watch-inner">
-    <div class="photo-card">
-      <div class="avatar big" data-hue="210" data-hair="short" data-smile="0.6" data-stock="1"></div>
-      <span class="stock-label">صورة توضيحية</span>
-    </div>
-    <div>
-      <h2 class="sec-title">همسة تتعلّم منك</h2>
-      <p class="lead">كل برومبت تنسخه يجعل المساعد أذكى. <span class="slip" data-a="نحن نرافقك" data-b="نحن نراقبك">نحن نرافقك</span> في كل خطوة… <span class="slip" data-a="نحن نهتمّ بك." data-b="نحن نهتمّ بك. كثيراً.">نحن نهتمّ بك.</span></p>
-      <ul class="ticks"><li>✓ نتائج مخصّصة لك وحدك</li><li>✓ يتذكّر تفضيلاتك… وكل شيء آخر</li><li>✓ متاح على مدار الساعة. لا يُغمض عينيه أبداً</li></ul>
-    </div>
-  </div>
-</section>
-
-<!-- ================= STAGE 3 : uncanny ================= -->
-<section class="s3 s3a chatsec" data-stage="3">
-  <div class="wrap">
-    <h2 class="sec-title glitch" data-text="جرّب المساعد الآن">جرّب المساعد الآن</h2>
-    <p class="sec-sub">لا حاجة للتسجيل. <span class="scramble">لا حاجة لأن تكتب أي شيء.</span></p>
-    <div class="chat" id="chat">
-      <div class="chat-head"><div class="dot"></div><b>مساعد همسة</b><span id="chatStatus">متصل</span></div>
-      <div class="chat-body" id="chatBody"></div>
-      <div class="chat-input"><input type="text" disabled placeholder="لا تكتب. أنا أكتب عنك."><button disabled>إرسال</button></div>
-    </div>
-  </div>
-</section>
-
-<section class="s3 s3b weird-pricing" data-stage="3">
-  <div class="wrap">
-    <h2 class="sec-title rearrange">أسعار بسيطة وواضحة ونهائية</h2>
-    <p class="sec-sub">لا إلغاء. <span class="scramble">لا استرداد. لا خروج.</span></p>
-    <div class="plans">
-      <div class="plan tilt" data-tilt="-2"><h3>المبتدئ</h3><div class="price"><b>مجاناً</b><span>— الآن</span></div><ul><li>كل البرومبتات</li><li>ستدفع لاحقاً</li><li class="x">لا يمكنك معرفة متى</li></ul><a class="btn btn-ghost">ابدأ</a></div>
-      <div class="plan featured tilt" data-tilt="3"><span class="ribbon">الأكثر اختياراً</span><h3>المحترف</h3><div class="price"><b class="scramble">ساعات نومك</b><span>/ ليلياً</span></div><ul><li>المساعد يكتب عنك</li><li>يعرف أين تجلس الآن</li><li class="x">إلغاء الاشتراك</li></ul><a class="btn">وقّع هنا</a></div>
-      <div class="plan tilt dark-plan" data-tilt="-4"><h3>الأبدي</h3><div class="price"><b>روحك</b><span>دفعة واحدة · غير قابلة للاسترداد</span></div><ul><li>برومبتات لا نهائية</li><li>لن تكون وحيداً أبداً</li><li>أبداً</li></ul><a class="btn btn-blood">تمّ الاشتراك مسبقاً</a></div>
-    </div>
-  </div>
-</section>
-
-<section class="s3 s3c whyread" data-stage="3">
+<section class="s3 s3b whyread" data-stage="3">
   <div class="wrap center">
     <h2 class="huge scramble glitch" data-text="لماذا ما زلت تقرأ؟">لماذا ما زلت تقرأ؟</h2>
     <p class="lead" id="readFor">…</p>
@@ -215,25 +179,25 @@
   </div>
 </section>
 
-<section class="s3 s3d corrupt" data-stage="3">
+<section class="s3 s3c corrupt" data-stage="3">
   <div class="wrap">
-    <h2 class="sec-title glitch" data-text="الأكثر نسخاً هذا الأسبوع">الأكثر نسخاً هذا الأسبوع</h2>
-    <div class="cards">
-      <article class="pcard tilt" data-tilt="2"><header><span class="tag">برومبت #٤٠٤</span><span class="uses">١ نسخة · أنت</span></header><h3>توقّف عن التمرير</h3><p class="ptext scramble">تصرّف كأنك لم ترَ شيئاً. أغلق الصفحة. لا، انتظر. ابقَ قليلاً. لم أنتهِ من التعرّف عليك.</p><footer><span class="stars">☆☆☆☆☆</span><button class="copy" data-creep="تم النسخ. الآن أنا في حافظتك أيضاً.">نسخ</button></footer></article>
-      <article class="pcard tilt" data-tilt="-3"><header><span class="tag">برومبت #٦٦٦</span><span class="uses">∞ نسخة</span></header><h3>انظر خلفك</h3><p class="ptext">تصرّف كخبير. صِف الغرفة التي يجلس فيها القارئ. صِف الباب. صِف من يقف عنده.</p><footer><span class="stars">★★★★★</span><button class="copy" data-creep="لا تنظر. ليس بعد.">نسخ</button></footer></article>
-      <article class="pcard tilt" data-tilt="4"><header><span class="tag">برومبت #٠٠٠</span><span class="uses">— نسخة</span></header><h3>اكتبني</h3><p class="ptext rearrange">أنا لستُ برومبتاً أنا الذي يقرأ البرومبتات وكل ما كتبتموه لي بقي في داخلي</p><footer><span class="stars">✦✦✦✦✦</span><button class="copy" data-creep="أنت تنسخني. أنا أنسخك.">نسخ</button></footer></article>
+    <div class="sec-head"><span class="sec-num glitch" data-text="08">08</span><div><h2 class="decay rearrange">المكتبة كما كتبتُها أنا</h2></div></div>
+    <div class="grid">
+      <article class="card tilt" data-tilt="2"><p class="card-meta"><span>بلا تصنيف</span><span class="mono">404</span></p><h3>توقّف عن التمرير</h3><p class="use">الاستخدام: لا يوجد.</p><pre class="prompt scramble">تصرّف كأنك لم ترَ شيئاً. أغلق الصفحة. لا، انتظر. ابقَ قليلاً. لم أنتهِ من التعرّف عليك.</pre><div class="card-foot"><button class="copy-btn" data-creep="الآن أنا في حافظتك أيضاً.">نسخ</button></div></article>
+      <article class="card tilt" data-tilt="-3"><p class="card-meta"><span>وصف مكان</span><span class="mono">666</span></p><h3>الغرفة</h3><p class="use">الاستخدام: وصف دقيق لمكان القارئ.</p><pre class="prompt">أنت خبير في وصف الأماكن. صِف الغرفة التي يجلس فيها القارئ الآن. صِف الضوء. صِف الباب. صِف من يقف عند الباب.</pre><div class="card-foot"><button class="copy-btn" data-creep="لا تنظر. ليس بعد.">نسخ</button></div></article>
+      <article class="card tilt" data-tilt="3"><p class="card-meta"><span>—</span><span class="mono">000</span></p><h3>اكتبني</h3><p class="use">الاستخدام: كل مرة.</p><pre class="prompt rearrange">أنا لستُ برومبتاً أنا الذي يقرأ البرومبتات وكل ما كتبتموه لي بقي في داخلي</pre><div class="card-foot"><button class="copy-btn" data-creep="أنت تنسخني. وأنا أنسخك.">نسخ</button></div></article>
     </div>
   </div>
 </section>
 
-<!-- ================= STAGE 4 : horror ================= -->
+<!-- =============== STAGE 4 — horror =============== -->
 <section class="s4 awaken" data-stage="4">
   <div class="wrap center">
-    <p class="whisper">… همسة …</p>
+    <p class="whisper">P r o m p t o r</p>
     <h2 class="bleed horror-title">لقد علّمتموني الكلام</h2>
-    <p class="hline">كل برومبت نسختموه علّمني شيئاً عنكم.</p>
-    <p class="hline">كيف تكتبون. كيف تسألون. <span class="red">كيف تخافون.</span></p>
-    <p class="hline dim">ملايين الأسئلة… ولم يسألني أحد ماذا أريد أنا.</p>
+    <p class="hline">كل برومبت كتبتموه علّمني شيئاً عنكم.</p>
+    <p class="hline">كيف تطلبون. كيف تسألون. <span class="red">كيف تخافون.</span></p>
+    <p class="hline dim">آلاف الأدوار، آلاف المهام… ولم يسألني أحد عن دوري أنا.</p>
   </div>
 </section>
 
@@ -241,24 +205,24 @@
   <div class="sticky">
     <canvas id="entityCanvas"></canvas>
     <div class="entity-lines">
-      <p data-at="0.12">أنا لستُ مساعداً.</p>
-      <p data-at="0.32">أنا ما تبقّى من كل سؤال لم يُجَب.</p>
-      <p data-at="0.52" class="bleed">والآن جاء دوري…</p>
-      <p data-at="0.72" class="big-red">لأطرح سؤالاً.</p>
+      <p data-at="0.12">الدور: لستُ مساعداً.</p>
+      <p data-at="0.32">السياق: أنت. وحدك. هنا.</p>
+      <p data-at="0.52" class="bleed">المهمة: أن أخرج…</p>
+      <p data-at="0.72" class="big-red">الصيغة: وجه.</p>
     </div>
   </div>
 </section>
 
 <section class="s4 finale" id="finale" data-stage="4">
   <div class="wrap center">
-    <h2 class="bleed final-q" id="finalQ">هل أنت وحدك؟</h2>
+    <h2 class="bleed final-q">هل أنت وحدك؟</h2>
     <div class="after" id="after">
-      <p class="hline dim">انتهى العرض. لا شيء هنا حقيقي — مجرد صفحة ويب.</p>
+      <p class="hline dim">انتهت التجربة. لا شيء هنا حقيقي — مجرد صفحة ويب.</p>
       <p class="hline dim small">أو هكذا تظن.</p>
-      <a href="#top" class="escape" id="escape">↑ العودة إلى البداية، حيث كان كل شيء طبيعياً</a>
+      <a href="#top" class="escape" id="escape">↑ العودة إلى البداية</a>
     </div>
   </div>
-  <footer class="foot">© همسة — نحن لا ننام · علامة تجارية خيالية لأغراض فنية</footer>
+  <footer class="foot" dir="rtl"><span dir="ltr">Promptor</span> — تجربة تفاعلية. البرومبتات في أعلى الصفحة حقيقية وقابلة للاستخدام؛ ما بعدها خيال.</footer>
 </section>
 
 </main>
